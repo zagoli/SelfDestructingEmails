@@ -1,11 +1,13 @@
 import random
-import string
-import qrcode
 import smtplib
-from pathlib import Path
+import string
 from dataclasses import dataclass
-from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from pathlib import Path
+
+import qrcode
+
 
 @dataclass
 class SmtpServerConfig:
@@ -14,13 +16,16 @@ class SmtpServerConfig:
     sender_email: str
     password: str
 
+
 def _random_code(size: int):
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=size))
+
 
 def _generate_qrcode(images_path: Path, filename: str):
     content = 'Secret message: ' + _random_code(10)
     qr = qrcode.make(content)
     qr.save(images_path / (filename + '.png'))
+
 
 def _send_email(smtp_server_config: SmtpServerConfig, receiver_email: str, email_content: str):
     with smtplib.SMTP(smtp_server_config.smtp_server, smtp_server_config.port) as server:
@@ -40,23 +45,21 @@ def _send_email(smtp_server_config: SmtpServerConfig, receiver_email: str, email
             print(e)
 
 
-def sender(smtp_server_config: SmtpServerConfig):
+def _generate_email_content(image_id: str, images_server_address: str):
+    return f'''
+    <html>
+        <h1>Enjoy your secret!</h1>
+        <img src="{images_server_address}/img/{image_id}.png" alt="secret code">
+    </html>
+    '''
+
+
+def sender(smtp_server_config: SmtpServerConfig, images_server_address: str):
     while True:
         receiver_email = input('Insert an email address: ')
         if receiver_email == 'stop':
             break
         image_id = _random_code(7)
         print('Sending mail to', receiver_email, 'with image', image_id)
-        # _generate_qrcode(Path('images'), image_id)
-        _send_email(smtp_server_config, receiver_email, '<h1>CIAO</h1>')
-
-
-
-if __name__ == '__main__':
-    smtp_server_config = SmtpServerConfig(
-        smtp_server='smtp.gmail.com',
-        port=587,
-        sender_email='',
-        password=''
-    )
-    sender(smtp_server_config)
+        _generate_qrcode(Path('images'), image_id)
+        _send_email(smtp_server_config, receiver_email, _generate_email_content(image_id, images_server_address))
