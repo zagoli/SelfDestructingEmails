@@ -1,6 +1,7 @@
 import logging
+from pathlib import Path
 
-from flask import Flask
+from flask import Flask, send_file
 
 app = Flask(__name__)
 logging.getLogger('werkzeug').disabled = True
@@ -11,5 +12,6 @@ __used_secrets = set()
 def image(image_name: str):
     if image_name not in __used_secrets:
         __used_secrets.add(image_name)
-        return f'Your secret is: {image_name}'
-    return 'Used secret'
+        image_path = Path('images/qr') / image_name
+        return send_file(image_path, mimetype='image/png')
+    return send_file(Path('images/blocked.png'), mimetype='image/png')

@@ -61,5 +61,5 @@ def sender(smtp_server_config: SmtpServerConfig, images_server_address: str):
             break
         image_id = _random_code(7)
         print('Sending mail to', receiver_email, 'with image', image_id)
-        _generate_qrcode(Path('images'), image_id)
+        _generate_qrcode(Path('images/qr'), image_id)
         _send_email(smtp_server_config, receiver_email, _generate_email_content(image_id, images_server_address))
