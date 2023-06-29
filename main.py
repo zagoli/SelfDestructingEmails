@@ -1,4 +1,7 @@
-import threading
+import multiprocessing
+import time
+
+from app import app
 from email_sender import sender, SmtpServerConfig
 
 if __name__ == '__main__':
@@ -9,5 +12,10 @@ if __name__ == '__main__':
         password=''
     )
     images_server_address = ''
-    mail_sender = threading.Thread(target=sender(smtp_server_config, images_server_address))
-    mail_sender.start()
+
+    images_server = multiprocessing.Process(
+        target=lambda: app.run(host='0.0.0.0', port=8080, debug=True, use_reloader=False)
+    )
+    images_server.start()
+    time.sleep(1)  # to not mess with stdout output
+    sender(smtp_server_config, images_server_address)
