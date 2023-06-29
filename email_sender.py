@@ -49,7 +49,7 @@ def _generate_email_content(image_id: str, images_server_address: str):
     return f'''
     <html>
         <h1>Enjoy your secret!</h1>
-        <img src="{images_server_address}/img/{image_id}.png" alt="secret code">
+        <img src="{images_server_address}/secret/{image_id}.png" alt="secret code">
     </html>
     '''
 
