@@ -1,3 +1,5 @@
+# Jacopo Zagoli, 2023
+
 import random
 import smtplib
 import string
