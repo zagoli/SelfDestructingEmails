@@ -36,4 +36,4 @@ machine with a valid SSL certificate, it should work fine.
 
 ## Notes
 Please note that this code is experimental and lacks certain essential 
-features such as sanity checks and input validation. Exercise caution while using it.
+features such as data persistence, sanity checks and input validation. Exercise caution while using it.
